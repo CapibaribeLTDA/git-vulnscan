@@ -1,0 +1,493 @@
+{
+  "results": [
+    {
+      "source": {
+        "path": "__REPO__/package-lock.json",
+        "type": "lockfile"
+      },
+      "packages": [
+        {
+          "package": {
+            "name": "lodash",
+            "version": "4.17.15",
+            "ecosystem": "npm",
+            "purl": "pkg:npm/lodash@4.17.15?source=PUBLIC_REGISTRY"
+          },
+          "vulnerabilities": [
+            {
+              "id": "GHSA-29mw-wpgm-hmr9",
+              "summary": "Regular Expression Denial of Service (ReDoS) in lodash",
+              "aliases": [
+                "CVE-2020-28500"
+              ],
+              "details": "All versions of package lodash prior to 4.17.21 are vulnerable to Regular Expression Denial of Service (ReDoS) via the `toNumber`, `trim` and `trimEnd` function",
+              "affected": [
+                {
+                  "package": {
+                    "ecosystem": "npm",
+                    "name": "lodash",
+                    "purl": "pkg:npm/lodash"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "4.0.0"
+                        },
+                        {
+                          "fixed": "4.17.21"
+                        }
+                      ],
+                      "type": "SEMVER"
+                    }
+                  ]
+                },
+                {
+                  "package": {
+                    "ecosystem": "npm",
+                    "name": "lodash-es",
+                    "purl": "pkg:npm/lodash-es"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "4.0.0"
+                        },
+                        {
+                          "fixed": "4.17.21"
+                        }
+                      ],
+                      "type": "SEMVER"
+                    }
+                  ]
+                },
+                {
+                  "package": {
+                    "ecosystem": "npm",
+                    "name": "lodash.trimend",
+                    "purl": "pkg:npm/lodash.trimend"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "4.0.0"
+                        },
+                        {
+                          "last_affected": "4.5.1"
+                        }
+                      ],
+                      "type": "SEMVER"
+                    }
+                  ]
+                },
+                {
+                  "package": {
+                    "ecosystem": "npm",
+                    "name": "lodash.trim",
+                    "purl": "pkg:npm/lodash.trim"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "4.0.0"
+                        },
+                        {
+                          "last_affected": "4.5.1"
+                        }
+                      ],
+                      "type": "SEMVER"
+                    }
+                  ]
+                },
+                {
+                  "package": {
+                    "ecosystem": "RubyGems",
+                    "name": "lodash-rails",
+                    "purl": "pkg:gem/lodash-rails"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "4.0.0"
+                        },
+                        {
+                          "fixed": "4.17.21"
+                        }
+                      ],
+                      "type": "ECOSYSTEM"
+                    }
+                  ]
+                }
+              ],
+              "database_specific": {
+                "severity": "MODERATE"
+              }
+            },
+            {
+              "id": "GHSA-35jh-r3h4-6jhm",
+              "summary": "Command Injection in lodash",
+              "aliases": [
+                "CVE-2021-23337"
+              ],
+              "details": "`lodash` versions prior to 4.17.21 are vulnerable to Command Injection via the template function.",
+              "affected": [
+                {
+                  "package": {
+                    "ecosystem": "npm",
+                    "name": "lodash",
+                    "purl": "pkg:npm/lodash"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "0"
+                        },
+                        {
+                          "fixed": "4.17.21"
+                        }
+                      ],
+                      "type": "SEMVER"
+                    }
+                  ]
+                },
+                {
+                  "package": {
+                    "ecosystem": "npm",
+                    "name": "lodash-es",
+                    "purl": "pkg:npm/lodash-es"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "0"
+                        },
+                        {
+                          "fixed": "4.17.21"
+                        }
+                      ],
+                      "type": "SEMVER"
+                    }
+                  ]
+                },
+                {
+                  "package": {
+                    "ecosystem": "npm",
+                    "name": "lodash.template",
+                    "purl": "pkg:npm/lodash.template"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "0"
+                        },
+                        {
+                          "last_affected": "4.5.0"
+                        }
+                      ],
+                      "type": "SEMVER"
+                    }
+                  ]
+                },
+                {
+                  "package": {
+                    "ecosystem": "npm",
+                    "name": "lodash-template",
+                    "purl": "pkg:npm/lodash-template"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "0"
+                        },
+                        {
+                          "last_affected": "1.0.0"
+                        }
+                      ],
+                      "type": "SEMVER"
+                    }
+                  ]
+                },
+                {
+                  "package": {
+                    "ecosystem": "RubyGems",
+                    "name": "lodash-rails",
+                    "purl": "pkg:gem/lodash-rails"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "0"
+                        },
+                        {
+                          "fixed": "4.17.21"
+                        }
+                      ],
+                      "type": "ECOSYSTEM"
+                    }
+                  ]
+                }
+              ],
+              "database_specific": {
+                "severity": "HIGH"
+              }
+            }
+          ],
+          "groups": [
+            {
+              "ids": [
+                "GHSA-29mw-wpgm-hmr9"
+              ],
+              "aliases": [
+                "CVE-2020-28500",
+                "GHSA-29mw-wpgm-hmr9"
+              ],
+              "max_severity": "5.3"
+            },
+            {
+              "ids": [
+                "GHSA-35jh-r3h4-6jhm"
+              ],
+              "aliases": [
+                "CVE-2021-23337",
+                "GHSA-35jh-r3h4-6jhm"
+              ],
+              "max_severity": "7.2"
+            }
+          ]
+        },
+        {
+          "package": {
+            "name": "evil-pkg",
+            "version": "1.0.0",
+            "ecosystem": "npm"
+          },
+          "vulnerabilities": [
+            {
+              "id": "MAL-2025-0001",
+              "summary": "Malicious code in evil-pkg (npm)",
+              "affected": [
+                {
+                  "package": {
+                    "name": "evil-pkg",
+                    "ecosystem": "npm"
+                  },
+                  "ranges": []
+                }
+              ]
+            }
+          ],
+          "groups": [
+            {
+              "ids": [
+                "MAL-2025-0001"
+              ],
+              "aliases": [],
+              "max_severity": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": {
+        "path": "__REPO__/requirements.txt",
+        "type": "lockfile"
+      },
+      "packages": [
+        {
+          "package": {
+            "name": "django",
+            "version": "3.2.0",
+            "ecosystem": "PyPI",
+            "purl": "pkg:pypi/django@3.2.0"
+          },
+          "vulnerabilities": [
+            {
+              "id": "PYSEC-2021-109",
+              "aliases": [
+                "BIT-django-2021-35042",
+                "CVE-2021-35042",
+                "GHSA-xpfp-f569-q3p2"
+              ],
+              "details": "Django 3.1.x before 3.1.13 and 3.2.x before 3.2.5 allows QuerySet.order_by SQL injection if order_by is untrusted input from a client of a web application.",
+              "affected": [
+                {
+                  "package": {
+                    "ecosystem": "PyPI",
+                    "name": "django",
+                    "purl": "pkg:pypi/django"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "3.1"
+                        },
+                        {
+                          "fixed": "3.1.13"
+                        },
+                        {
+                          "introduced": "3.2"
+                        },
+                        {
+                          "fixed": "3.2.5"
+                        }
+                      ],
+                      "type": "ECOSYSTEM"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "GHSA-3h9f-r86x-qvjx",
+              "summary": "Django: cache middleware may expose private responses when unrelated request cookies are present",
+              "aliases": [
+                "BIT-django-2026-48588",
+                "CVE-2026-48588",
+                "PYSEC-2026-2090"
+              ],
+              "details": "An issue was discovered in Django 6.0 before 6.0.7 and 5.2 before 5.2.16.",
+              "affected": [
+                {
+                  "package": {
+                    "ecosystem": "PyPI",
+                    "name": "django",
+                    "purl": "pkg:pypi/django"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "0"
+                        },
+                        {
+                          "fixed": "5.2.16"
+                        }
+                      ],
+                      "type": "ECOSYSTEM"
+                    }
+                  ]
+                },
+                {
+                  "package": {
+                    "ecosystem": "PyPI",
+                    "name": "django",
+                    "purl": "pkg:pypi/django"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "6.0.0"
+                        },
+                        {
+                          "fixed": "6.0.7"
+                        }
+                      ],
+                      "type": "ECOSYSTEM"
+                    }
+                  ]
+                }
+              ],
+              "database_specific": {
+                "severity": "LOW"
+              }
+            },
+            {
+              "id": "GHSA-xpfp-f569-q3p2",
+              "summary": "SQL Injection in Django",
+              "aliases": [
+                "BIT-django-2021-35042",
+                "CVE-2021-35042",
+                "PYSEC-2021-109"
+              ],
+              "details": "Django 3.1.x before 3.1.13 and 3.2.x before 3.2.5 allows QuerySet.order_by SQL injection if order_by is untrusted input from a client of a web application.",
+              "affected": [
+                {
+                  "package": {
+                    "ecosystem": "PyPI",
+                    "name": "django",
+                    "purl": "pkg:pypi/django"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "3.2a1"
+                        },
+                        {
+                          "fixed": "3.2.5"
+                        }
+                      ],
+                      "type": "ECOSYSTEM"
+                    }
+                  ]
+                },
+                {
+                  "package": {
+                    "ecosystem": "PyPI",
+                    "name": "django",
+                    "purl": "pkg:pypi/django"
+                  },
+                  "ranges": [
+                    {
+                      "events": [
+                        {
+                          "introduced": "3.0a1"
+                        },
+                        {
+                          "fixed": "3.1.13"
+                        }
+                      ],
+                      "type": "ECOSYSTEM"
+                    }
+                  ]
+                }
+              ],
+              "database_specific": {
+                "severity": "CRITICAL"
+              }
+            }
+          ],
+          "groups": [
+            {
+              "ids": [
+                "PYSEC-2021-109",
+                "GHSA-xpfp-f569-q3p2"
+              ],
+              "aliases": [
+                "BIT-django-2021-35042",
+                "CVE-2021-35042",
+                "GHSA-xpfp-f569-q3p2",
+                "PYSEC-2021-109"
+              ],
+              "max_severity": "9.8"
+            },
+            {
+              "ids": [
+                "GHSA-3h9f-r86x-qvjx"
+              ],
+              "aliases": [
+                "BIT-django-2026-48588",
+                "CVE-2026-48588",
+                "GHSA-3h9f-r86x-qvjx",
+                "PYSEC-2026-2090"
+              ],
+              "max_severity": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

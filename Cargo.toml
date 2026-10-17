@@ -1,0 +1,30 @@
+[package]
+name = "git-vulnscan"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "A git extension that scans the repositories you clone for vulnerable dependencies and leaked secrets"
+
+# The binary name is what makes this a git extension: any executable called
+# `git-<name>` on your PATH can be run as `git <name>`.
+[[bin]]
+name = "git-vulnscan"
+path = "src/main.rs"
+
+[dependencies]
+# Error handling: `anyhow::Result` lets any error type bubble up with `?` and
+# lets us attach human-readable context to it.
+anyhow = "1"
+# Command-line parsing, generated from annotated structs (the "derive" API).
+clap = { version = "4", features = ["derive"] }
+# (De)serialization framework + its JSON backend, used to read the scanners'
+# JSON output and to print our own JSON report.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Temporary files/folders that delete themselves when dropped.
+tempfile = "3"
+
+[profile.release]
+# Smaller, faster release binary. Optional, but nice for a CLI tool.
+lto = true
+strip = true
