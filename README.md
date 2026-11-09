@@ -123,7 +123,10 @@ The repositories being scanned are untrusted, so a few decisions matter:
   config and ignore paths, and disables `gitleaks:allow`.
 - **Tracked files can't hide behind `.gitignore`.** osv-scanner skips
   gitignored files by default. A repo could commit a lockfile and also list it
-  in `.gitignore`, so git-vulnscan uses `--no-ignore`.
+  in `.gitignore`, so git-vulnscan uses `--no-ignore`. It skips only folders
+  git reports as untracked *and* ignored (build output, installed packages,
+  Homebrew's `Cellar/`): git never lists a folder that holds a tracked file,
+  so this can't hide a committed lockfile.
 - **No repository code is executed.** Lockfiles are parsed statically. Nothing
   runs `npm install`, build scripts or the repo's own hooks (git never clones
   hooks).

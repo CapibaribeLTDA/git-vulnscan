@@ -13,6 +13,7 @@ use anyhow::{Context, Result, bail};
 use serde::Deserialize;
 
 use super::{ScanRequest, last_lines, relative_to};
+use crate::git;
 use crate::model::{Finding, FindingKind, Package, Severity};
 use crate::settings;
 
@@ -20,6 +21,12 @@ use crate::settings;
 /// environments, which are big, slow to walk, and duplicate what the
 /// lockfiles already say.
 const EXCLUDED_DIRS: &[&str] = &["node_modules", ".venv", "venv", ".tox"];
+
+/// The most untracked, ignored folders we pass to osv-scanner as exclusions
+/// (see [`untracked_ignored_dirs`]). Real repositories have a few dozen; the
+/// cap keeps the command line short even in an unusual one. Folders past
+/// the cap are simply scanned, which can only add findings, never hide one.
+const MAX_IGNORED_DIRS: usize = 1000;
 
 /// Runs osv-scanner on the repository and converts its report.
 pub fn scan(binary: &Path, request: &ScanRequest) -> Result<Vec<Finding>> {
@@ -57,6 +64,8 @@ pub fn scan(binary: &Path, request: &ScanRequest) -> Result<Vec<Finding>> {
         // SECURITY: by default osv-scanner skips files matched by
         // `.gitignore`. A repository can commit a lockfile *and* list it in
         // its own `.gitignore` to hide it from the scan, so we turn that off.
+        // What `.gitignore` legitimately hides (build output, installed
+        // packages) is excluded more precisely below.
         "--no-ignore",
         // A repo without any lockfile is fine: report nothing, don't fail.
         "--allow-no-lockfiles",
@@ -68,6 +77,13 @@ pub fn scan(binary: &Path, request: &ScanRequest) -> Result<Vec<Finding>> {
     command.arg("--config").arg(&config);
     for dir in EXCLUDED_DIRS {
         command.args(["--x-exclude", dir]);
+    }
+    // osv-scanner reads a plain `--x-exclude` value as an exact path. We
+    // pass absolute paths: they always start with `/`, so a folder that
+    // happens to be called `g:...` or `r:...` can't be mistaken for a glob
+    // or regex pattern.
+    for dir in untracked_ignored_dirs(&repo) {
+        command.arg("--x-exclude").arg(repo.join(dir));
     }
     if request.local_db {
         // Download the vulnerability databases for the ecosystems in use and
@@ -90,6 +106,52 @@ pub fn scan(binary: &Path, request: &ScanRequest) -> Result<Vec<Finding>> {
             last_lines(&output.stderr, 5)
         ),
     }
+}
+
+/// The folders, relative to the repository root, that git reports as
+/// untracked *and* ignored: build output, installed packages, virtual
+/// environments, and other things made on this machine rather than
+/// committed to the repository.
+///
+/// The lockfiles in them describe someone else's project, not this one.
+/// For example, `/opt/homebrew` is a git repository whose `.gitignore`
+/// covers `Cellar/`, where every installed formula keeps its upstream
+/// sources, test requirements included. Scanning those reports hundreds of
+/// vulnerabilities in packages that were never installed.
+///
+/// SECURITY: this can't hide a committed lockfile. With `--directory`, git
+/// lists a folder only when *nothing* inside it is tracked; a folder that
+/// holds a tracked file is broken down into its untracked parts instead.
+/// So a repository that commits `vendor/Pipfile.lock` and ignores `vendor/`
+/// still gets that lockfile scanned.
+///
+/// If git fails, nothing is excluded: a noisier scan beats a silent one.
+fn untracked_ignored_dirs(repo: &Path) -> Vec<String> {
+    // --others:           only untracked files
+    // --ignored and
+    // --exclude-standard: ...that `.gitignore`, `.git/info/exclude` or
+    //                     `core.excludesFile` ignore
+    // --directory:        a folder with nothing tracked inside is listed once,
+    //                     as "dir/", instead of file by file
+    // -z:                 NUL-separated, with no quoting of unusual names
+    let args = ["ls-files", "-z", "--others", "--ignored", "--exclude-standard", "--directory"];
+    match git::try_run(repo, &args) {
+        Some(output) => dirs_in_ls_files(&output),
+        None => Vec::new(),
+    }
+}
+
+/// Picks the folders out of `git ls-files -z --directory` output: the
+/// entries that end with `/`. The other entries are single files next to
+/// tracked ones; they stay in the scan.
+fn dirs_in_ls_files(output: &str) -> Vec<String> {
+    output
+        .split('\0')
+        .filter_map(|entry| entry.strip_suffix('/'))
+        .filter(|dir| !dir.is_empty())
+        .take(MAX_IGNORED_DIRS)
+        .map(String::from)
+        .collect()
 }
 
 // ---------------------------------------------------------------------------
@@ -509,6 +571,20 @@ mod tests {
         let malware = by_id(&findings, "MAL-2025-0001");
         assert_eq!(malware.kind, FindingKind::Malicious);
         assert_eq!(malware.severity, Severity::Critical);
+    }
+
+    #[test]
+    fn only_folders_from_ls_files_are_excluded() {
+        // Folders end with "/"; the lone file next to tracked ones doesn't.
+        let output = "Cellar/\0Library/Taps/\0vendor/extra.lock\0sp ace/\0";
+        assert_eq!(dirs_in_ls_files(output), ["Cellar", "Library/Taps", "sp ace"]);
+        assert!(dirs_in_ls_files("").is_empty());
+    }
+
+    #[test]
+    fn excluded_folders_are_capped() {
+        let output = "d/\0".repeat(MAX_IGNORED_DIRS + 5);
+        assert_eq!(dirs_in_ls_files(&output).len(), MAX_IGNORED_DIRS);
     }
 
     #[test]

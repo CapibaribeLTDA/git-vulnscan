@@ -246,6 +246,51 @@ fn scanners_ignore_the_repositorys_own_config() {
     }
 }
 
+/// The values passed to `--x-exclude` in one logged osv-scanner call.
+fn excluded(call: &str) -> Vec<&str> {
+    let words: Vec<&str> = call.split(' ').collect();
+    words
+        .windows(2)
+        .filter(|pair| pair[0] == "--x-exclude")
+        .map(|pair| pair[1])
+        .collect()
+}
+
+#[test]
+fn untracked_ignored_folders_are_skipped_but_tracked_lockfiles_are_not() {
+    let sandbox = Sandbox::new();
+    let repo = sandbox.repo("project");
+    fs::write(repo.join(".gitignore"), "build/\nvendor/\n").unwrap();
+    // A lockfile committed inside an ignored folder, as a malicious repo
+    // might do to hide it.
+    fs::create_dir_all(repo.join("vendor")).unwrap();
+    fs::write(repo.join("vendor/Pipfile.lock"), "{}").unwrap();
+    sandbox.git(&repo, &["add", ".gitignore"]);
+    sandbox.git(&repo, &["add", "-f", "vendor/Pipfile.lock"]);
+    sandbox.commit(&repo, "vendor deps");
+    // Local, untracked and ignored: build output, and installed packages
+    // next to the committed lockfile.
+    fs::create_dir_all(repo.join("build/lib")).unwrap();
+    fs::write(repo.join("build/lib/requirements.txt"), "django==3.0.0\n").unwrap();
+    fs::create_dir_all(repo.join("vendor/installed")).unwrap();
+    fs::write(repo.join("vendor/installed/requirements.txt"), "django==3.0.0\n").unwrap();
+
+    sandbox.vulnscan(&repo, &["scan"]);
+
+    let root = repo.canonicalize().unwrap();
+    let osv = &sandbox.calls("osv-scanner")[0];
+    let excluded = excluded(osv);
+    for dir in ["build", "vendor/installed"] {
+        let path = root.join(dir).display().to_string();
+        assert!(excluded.contains(&path.as_str()), "{dir} not excluded: {osv}");
+    }
+    // `vendor` holds a tracked file, so it must stay in the scan.
+    let vendor = root.join("vendor").display().to_string();
+    assert!(!excluded.contains(&vendor.as_str()), "vendor was excluded: {osv}");
+    // Still scanning gitignored files: only untracked folders are skipped.
+    assert!(osv.contains("--no-ignore"), "{osv}");
+}
+
 #[test]
 fn user_allowlists_are_used() {
     let sandbox = Sandbox::new();
